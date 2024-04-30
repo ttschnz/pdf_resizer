@@ -1,136 +1,135 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload new File</title>
-    <style>
-      body {
-        font-family: Roboto, sans-serif;
-        display: flex;
-        flex-direction: column;
-        margin: 0;
-        padding: 50px;
-        box-sizing: border-box;
-        height: 100vh;
-        width: 100vw;
-        gap: 50px;
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload new File</title>
+  <style>
+    body {
+      font-family: Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 50px;
+      box-sizing: border-box;
+      height: 100vh;
+      width: 100vw;
+      gap: 50px;
     }
 
     div#drop_zone {
-        /* border: 1px solid black; */
-        border-radius: 5px;
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 5px 5px 7px 6px #0000004a;
-        flex-direction: column;
-        /* margin: 20px; */
-        transition: box-shadow 0.3s;
+      /* border: 1px solid black; */
+      border-radius: 5px;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 5px 5px 7px 6px #0000004a;
+      flex-direction: column;
+      transition: box-shadow 0.3s;
     }
-    div#drop_zone[data-drag-over=true]{
-    /* background: #ecfcff; */
-    box-shadow: 5px 5px 18px 12px #c56fff4a;
+
+    div#drop_zone[data-drag-over=true] {
+      box-shadow: 5px 5px 18px 12px #c56fff4a;
     }
 
     form {
-        display: flex;
-        flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
-    input[type=file]{
+
+    input[type=file] {
       display: none;
     }
 
-    h1{
+    h1 {
       margin: 0;
       font-weight: 400;
     }
+
     span#file_list {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
-span#file_list span::before {
-    content: "- ";
-}
-    </style>
+    span#file_list span::before {
+      content: "- ";
+    }
+  </style>
 </head>
+
 <body>
-    <h1>file-resizer</h1>
-    
-    <div
-  id="drop_zone"
-  ondrop="dropHandler(event);"
-  ondragover="dragOverHandler(event);"
-  ondragleave="dragLeaveHandler(event);"
-  data-drag-over=false
-  >
-  <p>
-    <span>
-      Drag a file here or
+  <h1>file-resizer</h1>
+
+  <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"
+    ondragleave="dragLeaveHandler(event);" data-drag-over=false>
+    <p>
+      <span>
+        Drag a file here or
+      </span>
+      <button onclick="openDialog();">
+        choose one
+      </button>
+    </p>
+    <span id="file_list">
+
     </span>
-    <button onclick="openDialog();">
-      choose one
-    </button>
-  </p>
-  <span id="file_list">
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file onchange="checkSubmit();">
+      <input type=submit value=Submit disabled>
+    </form>
+  </div>
 
-  </span>
-      <form method=post enctype=multipart/form-data>
-        <input type=file name=file onchange="checkSubmit();">
-        <input type=submit value=Submit disabled>
-      </form>    
-</div>
-  
-    <script>
-      let drop_zone = document.querySelector("div#drop_zone");
-      let file_input = document.querySelector("input[type=file]");
-      let submit_button = document.querySelector("input[type=submit]");
-      let file_list = document.querySelector("#file_list");
+  <script>
+    let drop_zone = document.querySelector("div#drop_zone");
+    let file_input = document.querySelector("input[type=file]");
+    let submit_button = document.querySelector("input[type=submit]");
+    let file_list = document.querySelector("#file_list");
 
-      function openDialog(){
-        file_input.click();
-      }
+    function openDialog() {
+      file_input.click();
+    }
 
-      function dragOverHandler(ev) {
-        console.log("File(s) in drop zone");
-        ev.preventDefault();
-        drop_zone.dataset.dragOver=true;
-      }
-      
-      function dragLeaveHandler(ev){
-        console.log("Mouse left");
-        ev.preventDefault();
-        drop_zone.dataset.dragOver=false;
-      }
-      
-      function dropHandler(ev) {
-        console.log("File(s) dropped");
-        ev.preventDefault();
-        file_input.files = ev.dataTransfer.files;
-        drop_zone.dataset.dragOver=false;
-        console.log(ev.dataTransfer);
-        checkSubmit();
-      }
+    function dragOverHandler(ev) {
+      console.log("File(s) in drop zone");
+      ev.preventDefault();
+      drop_zone.dataset.dragOver = true;
+    }
 
-      function checkSubmit(retryCount){
-        file_list.innerHTML = "";
-        Array.from(file_input.files).forEach((file)=>{
-          let file_elmnt = document.createElement("span");
-          file_elmnt.innerText=file.name;
-          file_list.appendChild(file_elmnt);
-        });
-        console.log("testing");
-        if (file_input.files.length > 0){
-          submit_button.disabled = false;
-          uploadFile();
-        }
-      }
+    function dragLeaveHandler(ev) {
+      console.log("Mouse left");
+      ev.preventDefault();
+      drop_zone.dataset.dragOver = false;
+    }
 
-      function uploadFile(){
-        submit_button.click();
+    function dropHandler(ev) {
+      console.log("File(s) dropped");
+      ev.preventDefault();
+      file_input.files = ev.dataTransfer.files;
+      drop_zone.dataset.dragOver = false;
+      console.log(ev.dataTransfer);
+      checkSubmit();
+    }
+
+    function checkSubmit(retryCount) {
+      file_list.innerHTML = "";
+      Array.from(file_input.files).forEach((file) => {
+        let file_elmnt = document.createElement("span");
+        file_elmnt.innerText = file.name;
+        file_list.appendChild(file_elmnt);
+      });
+      console.log("testing");
+      if (file_input.files.length > 0) {
+        submit_button.disabled = false;
+        uploadFile();
       }
-    </script>
+    }
+
+    function uploadFile() {
+      submit_button.click();
+    }
+  </script>
 </body>
+
 </html>
