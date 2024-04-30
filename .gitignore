@@ -1,0 +1,6 @@
+*.ico
+*.bat
+*.spec
+venv
+temp
+src
